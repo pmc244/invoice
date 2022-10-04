@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Show invoice{% endblock %}
+
+{% block body %}
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+    </style>
+    <h1>Invoice Number {{ invoice.number }}</h1>
+    <h1>Date : {{ invoice.date | date }}</h1>
+
+    <h2> Articles </h2>
+    <table>
+    <thead>
+    <tr><td>Description</td><td>Quantity</td><td>Amount</td><td>VAT</td><td>Total</td></tr>
+    </thead>
+    <tbody>
+    {% for line in invoice.invoiceLines %}
+                <tr>
+                    <td>
+                        {{ line.description }}
+                    </td>
+                    <td>
+                        {{ line.quantity }}
+                    </td>
+                    <td>
+                        {{ line.amount }}
+                    </td>
+                    <td>
+                        {{ line.vat }}
+                    </td>
+                    <td>
+                        {{ line.total }}
+                    </td>
+                </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+    <br>
+    <div><a href="{{ path('all_invoices') }}"> List all</a> </div>
+
+{% endblock %}

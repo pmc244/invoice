@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme formInvoice 'bootstrap_5_layout.html.twig' %}
+
+{% block title %}Add an invoice{% endblock %}
+
+{% block body %}
+    <h1>Adding invoice</h1>
+    {{ form_start(formInvoice) }}
+
+    {{ form_row(formInvoice.date) }}
+    {{ form_row(formInvoice.number) }}
+    {{ form_row(formInvoice.customer) }}
+
+    <h3>Invoice's lines</h3>
+    <ul class="invoicelines"
+         data-index="{{ formInvoice.invoicelines|length > 0 ? formInvoice.invoicelines|last.vars.total + 1 : 0 }}"
+         data-prototype="{{ form_widget(formInvoice.invoicelines.vars.prototype)|e('html_attr') }}">
+    </ul>
+
+    <button type="button" class="add_item_link" data-collection-holder-class="invoicelines">Add a line</button>
+
+    <button type="submit" class="btn btn-success">Save Invoice</button>
+
+    {{ form_end(formInvoice) }}
+
+    <script type="text/javascript">
+
+        const addLineInvoice = (item) => {
+            const removeFormButton = document.createElement('button');
+            removeFormButton.innerText = 'Delete line';
+
+            item.append(removeFormButton);
+
+            removeFormButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                item.remove();
+            });
+        }
+
+        const addFormToCollection = (e) => {
+            const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+
+            const item = document.createElement('li');
+
+            item.innerHTML = collectionHolder
+                .dataset
+                .prototype
+                .replace(
+                    /__name__/g,
+                    collectionHolder.dataset.index
+                );
+
+            collectionHolder.appendChild(item);
+
+            collectionHolder.dataset.index++;
+
+            addLineInvoice(item);
+        };
+
+        document
+            .querySelectorAll('.add_item_link')
+            .forEach(btn => {
+                btn.addEventListener("click", addFormToCollection)
+            });
+        document
+            .querySelectorAll('ul.invoicelines li')
+            .forEach((line) => {
+                addLineInvoice(line)
+            });
+
+    </script>
+{% endblock %}
